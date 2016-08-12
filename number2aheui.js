@@ -16,8 +16,8 @@ var number2aheui = function() {
 			var diff = nr * i - num;
 			var t;
 
-			if(diff === 0) t = get_expr(nr).concat(i, "*");
-			else t = get_expr(nr).concat(i, "*", get_expr(-diff), "+");
+			if(diff === 0) t = get_expr(nr).concat(get_expr(i), "*");
+			else t = get_expr(nr).concat(get_expr(i), "*", get_expr(-diff), "+");
 
 			if(t.length < shortest.length || shortest.length === 0) shortest = t.slice(0);
 		}
@@ -65,7 +65,7 @@ var number2aheui = function() {
 			var nr = Math.floor(num / i);
 
 			if(nr >= 2 && nr <= 9 && nr * i === num)
-				return [i, nr, "*"];
+				return get_expr(i).concat(get_expr(nr), "*");
 		}
 
 		var rt = Math.sqrt(num);
