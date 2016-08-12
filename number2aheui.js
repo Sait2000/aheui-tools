@@ -60,7 +60,7 @@ var number2aheui = function() {
 			return [0];
 
 		else if(num === 1)
-			return [2, 2, "/"];
+			return [3, 2, "-"];
 
 		else if(num >= 2 && num <= 9)
 			return [num];
@@ -73,6 +73,7 @@ var number2aheui = function() {
 	}
 
 	function _get_expr(num) {
+		if(num < 0) return get_expr(0).concat(get_expr(-num), "-");
 		if(num <= 18) return get_basic(num);
 
 		for(var i = 9 ; i >= 2 ; i--) {
