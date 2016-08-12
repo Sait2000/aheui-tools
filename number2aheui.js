@@ -1,6 +1,20 @@
 var number2aheui = function() {
-	var cho = {"+": 3, "*": 4, "-": 16, "/": 2, ">": 8};
-	var jong = [0, 0, 1, 7, 16, 8, 18, 9, 15, 10];
+	var aheui_command = {
+		"+": "다",
+		"*": "따",
+		"-": "타",
+		"/": "나",
+		">": "빠",
+		0: "바",
+		2: "박",
+		3: "받",
+		4: "밤",
+		5: "발",
+		6: "밦",
+		7: "밝",
+		8: "밣",
+		9: "밞",
+	};
 
 	var expcache = {};
 
@@ -106,10 +120,8 @@ var number2aheui = function() {
 
 		var aheui = "";
 
-		for(var i in expr) {
-			var v = expr[i];
-			if(typeof v === "number") aheui += han_assemble(7, 0, jong[v]);
-			else aheui += han_assemble(cho[v], 0, 0);
+		for(var i = 0 ; i < expr.length ; i++) {
+			aheui += aheui_command[expr[i]];
 		}
 
 		return aheui;
