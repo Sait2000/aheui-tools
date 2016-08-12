@@ -3,7 +3,7 @@ var string2aheui = function(_n2a) {
 
 	function to_charcode(str) {
 		var a = [];
-		for(var i=0 ; i<str.length ; i++) a.push(str.charCodeAt(i));
+		for(var i = 0 ; i < str.length ; i++) a.push(str.charCodeAt(i));
 		return a;
 	}
 
