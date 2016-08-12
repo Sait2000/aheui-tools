@@ -43,7 +43,7 @@ var number2aheui = function() {
 
 	function get_basic(num) {
 		if(num === 0)
-			return [2, 2, "-"];
+			return [0];
 
 		else if(num === 1)
 			return [2, 2, "/"];
