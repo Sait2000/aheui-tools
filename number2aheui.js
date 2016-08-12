@@ -16,7 +16,7 @@ var number2aheui = function() {
 		9: "밞",
 	};
 
-	var expcache = {};
+	var expr_cache = {};
 
 	function han_assemble(cho, jung, jong) {
 		return String.fromCharCode(0xac00 + (((cho * 21) + jung) * 28) + jong);
@@ -72,7 +72,7 @@ var number2aheui = function() {
 		}
 	}
 
-	function _get_expr(num) {
+	function generate_expr(num) {
 		if(num < 0) return get_expr(0).concat(get_expr(-num), "-");
 		if(num <= 18) return get_basic(num);
 
@@ -94,10 +94,10 @@ var number2aheui = function() {
 	}
 
 	function get_expr(num) {
-		if(typeof expcache[num] === "undefined")
-			expcache[num] = _get_expr(num);
+		if(typeof expr_cache[num] === "undefined")
+			expr_cache[num] = generate_expr(num);
 
-		return expcache[num];
+		return expr_cache[num];
 	}
 
 	function get_expression(num) {
