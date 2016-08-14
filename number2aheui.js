@@ -101,7 +101,7 @@ var number2aheui = function() {
 	}
 
 	function get_expression(num) {
-		var shortest = get_expr(num);
+		var shortest = get_expr(num).slice();
 
 		if(num <= 18) return shortest;
 
