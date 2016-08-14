@@ -94,7 +94,7 @@ var number2aheui = function() {
 	}
 
 	function get_expr(num) {
-		if(typeof expr_cache[num] === "undefined")
+		if(!expr_cache[num])
 			expr_cache[num] = generate_expr(num);
 
 		return expr_cache[num];
