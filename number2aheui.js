@@ -5,6 +5,7 @@ var number2aheui = function() {
 		"-": "타",
 		"/": "나",
 		">": "빠",
+		"\\": "파",
 		0: "바",
 		2: "박",
 		3: "받",
@@ -16,7 +17,7 @@ var number2aheui = function() {
 		9: "밞",
 	};
 
-	var expr_cache = {};
+	var expr_cache = new_cache(9);
 
 	function han_assemble(cho, jung, jong) {
 		return String.fromCharCode(0xac00 + (((cho * 21) + jung) * 28) + jong);
@@ -55,34 +56,158 @@ var number2aheui = function() {
 		return shortest;
 	}
 
-	function get_basic(num) {
-		if(num === 0)
-			return [0];
-
-		else if(num === 1)
-			return [3, 2, "-"];
-
-		else if(num >= 2 && num <= 9)
-			return [num];
-
-		else if(num >= 10 && num <= 18) {
-			var n1 = Math.ceil(num / 2);
-			var n2 = num - n1;
-			return [n1, n2, "+"];
+	function new_cache(max_length) {
+		var cache = {};
+		var generations = [[]];
+		generations.push([]);
+		cache[0] = [0];
+		generations[1].push(0);
+		var i;
+		var j;
+		for(i = 2 ; i <= 9 ; i++) {
+			cache[i] = [i];
+			generations[1].push(i);
 		}
+		for(var g = 2 ; g <= max_length ; g++) {
+			var new_numbers = [];
+			for(var g1 = 1 ; g1 < g - 1 ; g1++) {
+				var g2 = g - g1 - 1;
+				var v;
+				var a;
+				var b;
+
+				// -
+				for(i = 0 ; i < generations[g1].length ; i++) {
+					a = generations[g1][i];
+					for(j = 0 ; j < generations[g2].length ; j++) {
+						b = generations[g2][j];
+						v = a - b;
+						if(!cache[v]) {
+							cache[v] = cache[a].concat(cache[b], "-");
+							new_numbers.push(v);
+						}
+						v = b - a;
+						if(!cache[v]) {
+							cache[v] = cache[b].concat(cache[a], "-");
+							new_numbers.push(v);
+						}
+					}
+				}
+
+				// +
+				for(i = 0 ; i < generations[g1].length ; i++) {
+					a = generations[g1][i];
+					for(j = 0 ; j < generations[g2].length ; j++) {
+						b = generations[g2][j];
+						v = b + a;
+						if(!cache[v]) {
+							cache[v] = cache[b].concat(cache[a], "+");
+							new_numbers.push(v);
+						}
+					}
+				}
+
+				// *
+				for(i = 0 ; i < generations[g1].length ; i++) {
+					a = generations[g1][i];
+					for(j = 0 ; j < generations[g2].length ; j++) {
+						b = generations[g2][j];
+						v = b * a;
+						if(!cache[v]) {
+							cache[v] = cache[b].concat(cache[a], "*");
+							new_numbers.push(v);
+						}
+					}
+				}
+
+				// /
+				for(i = 0 ; i < generations[g1].length ; i++) {
+					a = generations[g1][i];
+					for(j = 0 ; j < generations[g2].length ; j++) {
+						b = generations[g2][j];
+						if(a > 0 && b > 0) {
+							v = Math.floor(a / b);
+							if(!cache[v]) {
+								cache[v] = cache[a].concat(cache[b], "/");
+								new_numbers.push(v);
+							}
+							v = Math.floor(b / a);
+							if(!cache[v]) {
+								cache[v] = cache[b].concat(cache[a], "/");
+								new_numbers.push(v);
+							}
+						}
+					}
+				}
+			}
+
+			if(g >= 2) {
+				for(i = 0 ; i < generations[g - 2].length ; i++) {
+					a = generations[g - 2][i];
+					v = a * a;
+					if(!cache[v]) {
+						cache[v] = cache[a].concat(">", "*");
+						new_numbers.push(v);
+					}
+				}
+			}
+
+			if(g >= 4) {
+				for(i = 0 ; i < generations[g - 4].length ; i++) {
+					a = generations[g - 4][i];
+					v = a * a * a;
+					if(!cache[v]) {
+						cache[v] = cache[a].concat(">", ">", "*", "*");
+						new_numbers.push(v);
+					}
+
+					v = a + a * a;
+					if(!cache[v]) {
+						cache[v] = cache[a].concat(">", ">", "*", "+");
+						new_numbers.push(v);
+					}
+
+					v = a - a * a;
+					if(!cache[v]) {
+						cache[v] = cache[a].concat(">", ">", "*", "-");
+						new_numbers.push(v);
+					}
+
+					for(j = 0 ; j < generations[1].length ; j++) {
+						b = generations[1][j];
+						v = a * (a + b);
+						if(!cache[v]) {
+							cache[v] = cache[a].concat(">", cache[b], "+", "*");
+							new_numbers.push(v);
+						}
+
+						v = a * (a - b);
+						if(!cache[v]) {
+							cache[v] = cache[a].concat(">", cache[b], "-", "*");
+							new_numbers.push(v);
+						}
+					}
+				}
+			}
+
+			if(g >= 5) {
+				for(i = 0 ; i < generations[g - 5].length ; i++) {
+					a = generations[g - 5][i];
+
+					v = a * a - a;
+					if(!cache[v]) {
+						cache[v] = cache[a].concat(">", ">", "*", "\\", "-");
+						new_numbers.push(v);
+					}
+				}
+			}
+
+			generations.push(new_numbers);
+		}
+		return cache;
 	}
 
 	function generate_expr(num) {
-		if(num < 0) return get_expr(0).concat(get_expr(-num), "-");
-		if(num <= 18) return get_basic(num);
-
-		for(var i = 9 ; i >= 2 ; i--) {
-			var nr = Math.floor(num / i);
-
-			if(nr >= 2 && nr <= 9 && nr * i === num)
-				return get_expr(i).concat(get_expr(nr), "*");
-		}
-
 		var rt = Math.sqrt(num);
 		if(Math.floor(rt) === rt)
 			return get_expr(rt).concat(">", "*");
