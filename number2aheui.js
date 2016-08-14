@@ -33,7 +33,7 @@ var number2aheui = function() {
 			if(diff === 0) t = get_expr(nr).concat(get_expr(i), "*");
 			else t = get_expr(nr).concat(get_expr(i), "*", get_expr(-diff), "+");
 
-			if(!shortest || t.length < shortest.length) shortest = t.slice(0);
+			if(!shortest || t.length < shortest.length) shortest = t;
 		}
 
 		return shortest;
@@ -45,12 +45,12 @@ var number2aheui = function() {
 		var rt = Math.floor(Math.sqrt(num));
 		var remainder = num - rt * rt;
 		var t = get_expr(rt).concat(">", "*", get_expr(remainder), "+");
-		if(!shortest || t.length < shortest.length) shortest = t.slice(0);
+		if(!shortest || t.length < shortest.length) shortest = t;
 
 		rt = Math.ceil(Math.sqrt(num));
 		remainder = rt * rt - num;
 		t = get_expr(rt).concat(">", "*", get_expr(remainder), "-");
-		if(!shortest || t.length < shortest.length) shortest = t.slice(0);
+		if(!shortest || t.length < shortest.length) shortest = t;
 
 		return shortest;
 	}
