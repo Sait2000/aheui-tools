@@ -46,13 +46,15 @@ var number2aheui = function() {
 
 		var rt = Math.floor(Math.sqrt(num));
 		var remainder = num - rt * rt;
-		var t = get_expr(rt).concat(">", "*", get_expr(remainder), "+");
+		var t = get_expr(rt).concat(">", "*", get_delta_expr(remainder));
 		if(!shortest || t.length < shortest.length) shortest = t;
 
-		rt = Math.ceil(Math.sqrt(num));
-		remainder = rt * rt - num;
-		t = get_expr(rt).concat(">", "*", get_expr(remainder), "-");
-		if(!shortest || t.length < shortest.length) shortest = t;
+		if (remainder > 0) {
+			rt += 1;
+			remainder = num - rt * rt;
+			t = get_expr(rt).concat(">", "*", get_delta_expr(remainder));
+			if(!shortest || t.length < shortest.length) shortest = t;
+		}
 
 		return shortest;
 	}
@@ -207,14 +209,17 @@ var number2aheui = function() {
 	}
 
 	function generate_expr(num) {
-		var rt = Math.sqrt(num);
-		if(Math.floor(rt) === rt)
-			return get_expr(rt).concat(">", "*");
+		var shortest = try_dis(num);
+		if(num >= 0) {
+			var rt = Math.sqrt(num);
+			var arr_sqrt = try_sqrt(num);
 
-		var arr_dis = try_dis(num);
-		var arr_sqrt = try_sqrt(num);
+			if(arr_sqrt.length < shortest.length) {
+				shortest = arr_sqrt;
+			}
+		}
 
-		return arr_dis.length < arr_sqrt.length ? arr_dis : arr_sqrt;
+		return shortest;
 	}
 
 	function get_expr(num) {
@@ -222,6 +227,16 @@ var number2aheui = function() {
 			expr_cache[num] = generate_expr(num);
 
 		return expr_cache[num];
+	}
+
+	function get_delta_expr(num) {
+		if(num === 0) {
+			return [];
+		}
+		if(num < 0) {
+			return get_expr(-num).concat("-");
+		}
+		return get_expr(num).concat("+");
 	}
 
 	function get_expression(num) {
