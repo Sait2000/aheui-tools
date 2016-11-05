@@ -17,7 +17,8 @@ var number2aheui = function() {
 		9: "밞",
 	};
 
-	var expr_cache = new_cache(9);
+	var expr_cache = {};
+	init_cache(expr_cache, 9);
 
 	function han_assemble(cho, jung, jong) {
 		return String.fromCharCode(0xac00 + (((cho * 21) + jung) * 28) + jong);
@@ -56,8 +57,7 @@ var number2aheui = function() {
 		return shortest;
 	}
 
-	function new_cache(max_length) {
-		var cache = {};
+	function init_cache(cache, max_length) {
 		var generations = [[]];
 		generations.push([]);
 		cache[0] = [0];
@@ -204,7 +204,6 @@ var number2aheui = function() {
 
 			generations.push(new_numbers);
 		}
-		return cache;
 	}
 
 	function generate_expr(num) {
